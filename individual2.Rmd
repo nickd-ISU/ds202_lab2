@@ -15,16 +15,18 @@ This is an R Markdown document. Markdown is a simple formatting syntax for autho
 
 When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
+How are the ratings distributed? Draw a histogram of the ratings and describe it. Don’t forget to mention outliers, if there are any.
+The histogram show the most frequency of the choco rating is between 3 and 2.5. Second most frequency is between 2.5 and 3 and third is 3.5 to 4. The forth is 2.5 to 3. The outliers approximately occur between 1 to 2 and 4 to 5 from the box plot.
 ```{r cars}
-summary(cars)
+choco <- read.csv("https://xdaiisu.github.io/ds202materials/hwlabs/choco.csv")
+head(choco)
+choco_rating<-choco$Rating
+hist(choco_rating)
+boxplot(choco_rating)
 ```
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+Do ratings depend on the cacao percentage of a chocolate bar?
+I create a plot with rating for x axis and cacoa percentage for y axis. From the plot, we can see the rating does not depend on the cacao percentage of chocolate bar. The higher rating does not change the cacao percentage
+```{r}
+plot(x=choco_rating,y=choco$Cocoa.Pct)
 ```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
