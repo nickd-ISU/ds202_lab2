@@ -1,0 +1,92 @@
+---
+title: "team"
+author: "Nick Matthews; "
+date: "2/5/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Overall number of chocolate bars rated?
+```{r}
+
+choco <- read.csv("https://xdaiisu.github.io/ds202materials/hwlabs/choco.csv")
+ratings <- choco$Rating
+
+length(ratings)
+
+```
+
+### How does the number of ratings depend on the year? Draw a bar chart of the number of reports.
+```{r}
+library(ggplot2)
+
+years <- choco$Review.Date
+
+barplot(table(choco$Review.Date))
+
+```
+From the bar chart, it appears that the number of ratings on on chocolate increased from 2006-2008, then decreased in 2010. Then in continued to increase until 2013, and finally increased until 2015 before decreasing harshly from 2016-2017
+
+### Which are the three locations with the most ratings? How do ratings compare across these company locations?
+```{r}
+
+top3location <- sort(table(choco$Company.Location), decreasing = TRUE)[1:3]
+top3location
+
+usaAvg = choco[choco$Company.Location=="U.S.A.",c(6,7)]
+paste("USA average rating is ", mean(usaAvg$Rating))
+
+franceAvg = choco[choco$Company.Location=="France",c(6,7)]
+paste("France average rating is ", mean(franceAvg$Rating))
+
+canadaAvg = choco[choco$Company.Location=="Canada",c(6,7)]
+paste("Canada average rating is ", mean(canadaAvg$Rating))
+
+```
+I was able to obtain to top 3 most rated locations by using the table() function to count the occurences of each location in the table and then sort them in decreasing order. Then I index the first 3. To find how to ratings among the 3 locations compare, I took the mean rating of all ratings for each location using the mean() function.
+
+### Interesting question: plot Rating vs. Company with color for differnt companies
+```{r}
+
+company_frequency <- sort(table(choco$Company), decreasing = TRUE)[1:3]
+company_frequency_names <- names(company_frequency)
+company_frequency_names
+
+# Get the company with the most ratings
+soma_ratings <- as.data.frame(choco[choco$Company=="Soma", ])
+
+# Get the average rating per year for soma company
+soma_rating_by_year <- aggregate(soma_ratings$Rating, by=list(soma_ratings$Review.Date),
+                                FUN = mean)
+
+# Rename the columns
+names(soma_rating_by_year)[1] <- "Year"
+names(soma_rating_by_year)[2] <- "Avg_Rating"
+
+# A neat table showing the average ratings per year for Soma company
+soma_rating_by_year
+
+# Line plot for table
+plot(x=soma_rating_by_year$Year, y=soma_rating_by_year$Avg_Rating, type = "l",
+     xlab = "Year", ylab = "Average Rating", main = "Average rating per year for Soma")
+
+```
+For our question, we found the company with the most frequent 
+
+```{r}
+
+most3ratings <- choco[choco$Company %in% company_frequency_names,]
+
+grouped <- aggregate(most3ratings$Rating, by=list(most3ratings$Company,
+                      most3ratings$Review.Date),FUN = mean)
+names(grouped)[1] <- "Company"
+names(grouped)[2] <- "Year"
+names(grouped)[3] <- "Average_Rating"
+
+ggplot(grouped, mapping = aes(x=Year, y=Average_Rating, group=Company,
+                              color=Company)) + geom_line()
+
+```
